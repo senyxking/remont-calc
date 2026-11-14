@@ -61,8 +61,7 @@
     <button class="btn" id="sendBtn" type="button">Отправить расчет</button>
   </main>
   <script>
-    const BOT_TOKEN = '9277462001:AAGYtB_6zvGYlCswpiuiosH36Hrghsjhkcw';
-    const CHAT_ID = '1688360399';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOBVPv-3lEjlwvXfeWrGg1KXOJAYhM3ZecvYj6XC9GwjlupJ2rpyFGotef_Yo4hvpW/exec';
 
     const tg = window.Telegram?.WebApp;
     if (tg) { tg.ready(); tg.expand(); }
@@ -102,22 +101,27 @@
       const srvs = Array.from(document.querySelectorAll('input[name="srv"]:checked')).map(el => el.value).join(', ') || 'Нет';
       const u = tg?.initDataUnsafe?.user;
       const who = u ? `${u.first_name || ''} (@${u.username || u.id})` : 'Гость';
-      const text = `🔨 Новая заявка!\n👤 Клиент: ${who}\n📞 Контакт: ${contact.value}\n🏠 Тип: ${type}\n📐 Площадь: ${area.value} м²\n➕ Допы: ${srvs}\n💰 Сумма: ${total.toLocaleString('ru-RU')} ₽`;
 
       sendBtn.disabled = true;
       sendBtn.textContent = 'Отправляем...';
       try {
-        const r = await fetch(`https://telegram.org{BOT_TOKEN}/sendMessage`, {
+        await fetch(SCRIPT_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            who: who,
+            contact: contact.value,
+            type: type,
+            area: area.value,
+            srvs: srvs,
+            sum: total.toLocaleString('ru-RU') + ' ₽'
+          })
         });
-        const d = await r.json();
-        if (!d.ok) throw new Error(d.description);
-        if (tg) { tg.showAlert('Заявка отправлена!', () => tg.close()); }
-        else { alert('Заявка отправлена!'); }
+        if (tg) { tg.showAlert('Заявка успешно отправлена!', () => tg.close()); }
+        else { alert('Заявка успешно отправлена!'); }
       } catch (e) {
-        alert('Ошибка: ' + e.message);
+        alert('Ошибка сети: ' + e.message);
       }
       sendBtn.disabled = false;
       sendBtn.textContent = 'Отправить расчет';
