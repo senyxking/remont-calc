@@ -1,342 +1,131 @@
-
-
 <!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
   <title>Расчёт ремонта</title>
-
-  <!-- Официальный скрипт Telegram Web Apps -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+  <script src="https://telegram.org"></script>
   <style>
     :root {
-      color-scheme: light dark;
       --app-bg: var(--tg-theme-bg-color, #f4f5f7);
       --app-text: var(--tg-theme-text-color, #17212b);
       --app-hint: var(--tg-theme-hint-color, #77828c);
-      --app-card: var(--tg-theme-secondary-bg-color, #ffffff);
+      --app-card: var(--tg-theme-secondary-bg-color, #fff);
       --app-accent: var(--tg-theme-button-color, #3390ec);
-      --app-accent-text: var(--tg-theme-button-text-color, #ffffff);
+      --app-accent-text: var(--tg-theme-button-text-color, #fff);
       --app-border: color-mix(in srgb, var(--app-text) 12%, transparent);
-      --app-radius: 18px;
     }
-
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--app-bg);
-      color: var(--app-text);
-      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    main {
-      width: min(100%, 560px);
-      margin: 0 auto;
-      padding: 28px 20px calc(110px + env(safe-area-inset-bottom));
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--app-hint);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(28px, 8vw, 36px);
-      line-height: 1.12;
-      letter-spacing: -.04em;
-    }
-
-    .intro {
-      margin: 12px 0 24px;
-      color: var(--app-hint);
-    }
-
-    .card {
-      padding: 20px;
-      margin: 14px 0;
-      border: 1px solid var(--app-border);
-      border-radius: var(--app-radius);
-      background: var(--app-card);
-    }
-
-    .section-title {
-      display: block;
-      margin-bottom: 14px;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .type-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .type-option {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 14px;
-      border: 1px solid var(--app-border);
-      border-radius: 14px;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-    }
-
-    .type-option:has(input:checked) {
-      border-color: var(--app-accent);
-      background: color-mix(in srgb, var(--app-accent) 9%, var(--app-card));
-    }
-
-    input[type="radio"], input[type="checkbox"] {
-      width: 19px;
-      height: 19px;
-      margin: 0;
-      accent-color: var(--app-accent);
-      flex: 0 0 auto;
-    }
-
-    .type-name { font-weight: 650; }
-    .type-price {
-      display: block;
-      margin-top: 2px;
-      color: var(--app-hint);
-      font-size: 13px;
-    }
-
-    .area-heading {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .area-value {
-      color: var(--app-accent);
-      font-size: 24px;
-      font-weight: 750;
-      white-space: nowrap;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--app-accent);
-    }
-
-    .range-labels {
-      display: flex;
-      justify-content: space-between;
-      color: var(--app-hint);
-      font-size: 12px;
-    }
-
-    .service {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      cursor: pointer;
-    }
-
-    .service + .service { border-top: 1px solid var(--app-border); }
-    .service-copy { flex: 1; }
-    .service-title { display: block; font-weight: 600; }
-    .service-price { color: var(--app-hint); font-size: 13px; }
-
-    .total-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 18px 20px;
-      border-radius: var(--app-radius);
-      background: color-mix(in srgb, var(--app-accent) 12%, var(--app-card));
-    }
-
-    .total-label { color: var(--app-hint); font-size: 14px; }
-    .total-value {
-      font-size: clamp(23px, 7vw, 30px);
-      font-weight: 800;
-      letter-spacing: -.03em;
-      text-align: right;
-    }
-
-    .note {
-      margin: 12px 4px 0;
-      color: var(--app-hint);
-      font-size: 12px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition: none !important; }
-    }
+    body { margin: 0; background: var(--app-bg); color: var(--app-text); font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 540px; margin: 0 auto; padding: 24px 16px 100px; }
+    h1 { margin: 0 0 8px; font-size: 26px; }
+    .intro { margin: 0 0 20px; color: var(--app-hint); font-size: 14px; }
+    .card { padding: 16px; margin: 12px 0; border: 1px solid var(--app-border); border-radius: 16px; background: var(--app-card); }
+    .title { display: block; margin-bottom: 12px; font-weight: 700; font-size: 15px; }
+    .opt { display: flex; align-items: center; gap: 10px; padding: 12px; margin-bottom: 8px; border: 1px solid var(--app-border); border-radius: 12px; cursor: pointer; }
+    .opt:has(input:checked) { border-color: var(--app-accent); background: color-mix(in srgb, var(--app-accent) 10%, var(--app-card)); }
+    .hint { display: block; color: var(--app-hint); font-size: 13px; }
+    .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .val { color: var(--app-accent); font-size: 22px; font-weight: 700; }
+    input[type="range"] { width: 100%; accent-color: var(--app-accent); }
+    .input { width: 100%; padding: 12px; border: 1px solid var(--app-border); border-radius: 12px; background: var(--app-bg); color: var(--app-text); font: inherit; }
+    .total { display: flex; justify-content: space-between; align-items: center; padding: 18px; border-radius: 16px; background: color-mix(in srgb, var(--app-accent) 14%, var(--app-card)); font-weight: 700; }
+    .sum { font-size: 24px; }
+    .btn { width: 100%; padding: 14px; margin-top: 14px; border: 0; border-radius: 14px; background: var(--app-accent); color: var(--app-accent-text); font: inherit; font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
   <main>
-    <p class="eyebrow">Предварительная смета</p>
-    <h1>Рассчитайте стоимость ремонта</h1>
-    <p class="intro">Выберите параметры — покажем ориентировочную стоимость.</p>
-
-    <section class="card" aria-labelledby="repair-heading">
-      <span class="section-title" id="repair-heading">Тип ремонта</span>
-      <div class="type-list">
-        <label class="type-option">
-          <input type="radio" name="repairType" value="cosmetic" checked>
-          <span>
-            <span class="type-name">Косметический</span>
-            <span class="type-price">от 8 000 ₽ / м²</span>
-          </span>
-        </label>
-        <label class="type-option">
-          <input type="radio" name="repairType" value="capital">
-          <span>
-            <span class="type-name">Капитальный</span>
-            <span class="type-price">от 18 000 ₽ / м²</span>
-          </span>
-        </label>
-        <label class="type-option">
-          <input type="radio" name="repairType" value="designer">
-          <span>
-            <span class="type-name">Дизайнерский</span>
-            <span class="type-price">от 30 000 ₽ / м²</span>
-          </span>
-        </label>
-      </div>
-    </section>
-
-    <section class="card" aria-labelledby="area-heading">
-      <div class="area-heading">
-        <span class="section-title" id="area-heading" style="margin:0">Площадь квартиры</span>
-        <output class="area-value" id="areaValue">60 м²</output>
-      </div>
-      <input id="area" type="range" min="20" max="200" step="1" value="60"
-             aria-label="Площадь квартиры в квадратных метрах">
-      <div class="range-labels"><span>20 м²</span><span>200 м²</span></div>
-    </section>
-
-    <section class="card" aria-labelledby="services-heading">
-      <span class="section-title" id="services-heading">Дополнительные услуги</span>
-      <label class="service">
-        <input type="checkbox" name="service" value="design" data-price="50000">
-        <span class="service-copy">
-          <span class="service-title">Дизайн-проект</span>
-          <span class="service-price">+50 000 ₽</span>
-        </span>
-      </label>
-      <label class="service">
-        <input type="checkbox" name="service" value="cleanup" data-price="15000">
-        <span class="service-copy">
-          <span class="service-title">Вывоз строительного мусора</span>
-          <span class="service-price">+15 000 ₽</span>
-        </span>
-      </label>
-    </section>
-
-    <section class="total-card" aria-live="polite">
-      <span class="total-label">Предварительная стоимость</span>
-      <output class="total-value" id="totalValue">480 000 ₽</output>
-    </section>
-    <p class="note">Итоговая стоимость уточняется после замера и согласования работ.</p>
+    <h1>Расчёт стоимости ремонта</h1>
+    <p class="intro">Выберите параметры и оставьте контакт для связи.</p>
+    <div class="card">
+      <span class="title">Тип ремонта</span>
+      <label class="opt"><input type="radio" name="type" value="Косметический" data-rate="8000" checked><div><b>Косметический</b><span class="hint">от 8 000 ₽ / м²</span></div></label>
+      <label class="opt"><input type="radio" name="type" value="Капитальный" data-rate="18000"><div><b>Капитальный</b><span class="hint">от 18 000 ₽ / м²</span></div></label>
+      <label class="opt"><input type="radio" name="type" value="Дизайнерский" data-rate="30000"><div><b>Дизайнерский</b><span class="hint">от 30 000 ₽ / м²</span></div></label>
+    </div>
+    <div class="card">
+      <div class="row"><span class="title" style="margin:0">Площадь</span><span class="val" id="areaTxt">60 м²</span></div>
+      <input id="area" type="range" min="20" max="200" value="60">
+    </div>
+    <div class="card">
+      <span class="title">Дополнительно</span>
+      <label class="opt"><input type="checkbox" name="srv" value="Дизайн-проект" data-price="50000"><div><b>Дизайн-проект</b><span class="hint">+50 000 ₽</span></div></label>
+      <label class="opt"><input type="checkbox" name="srv" value="Вывоз мусора" data-price="15000"><div><b>Вывоз строительного мусора</b><span class="hint">+15 000 ₽</span></div></label>
+    </div>
+    <div class="card">
+      <span class="title">Ваш телефон или @username</span>
+      <input class="input" id="contact" type="text" placeholder="+7 900 123-45-67 или @username">
+    </div>
+    <div class="total"><span>Итого примерно:</span><span class="sum" id="sumTxt">480 000 ₽</span></div>
+    <button class="btn" id="sendBtn" type="button">Отправить расчет</button>
   </main>
-
   <script>
-    (() => {
-      const tg = window.Telegram?.WebApp;
+    const BOT_TOKEN = '9277462001:AAGYtB_6zvGYlCswpiuiosH36Hrghsjhkcw';
+    const CHAT_ID = '1688360399';
 
-      const rates = {
-        cosmetic: 8000,
-        capital: 18000,
-        designer: 30000
-      };
+    const tg = window.Telegram?.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
 
-      const repairNames = {
-        cosmetic: "Косметический",
-        capital: "Капитальный",
-        designer: "Дизайнерский"
-      };
+    const area = document.getElementById('area');
+    const contact = document.getElementById('contact');
+    const sendBtn = document.getElementById('sendBtn');
+    let total = 480000;
 
-      const areaInput = document.getElementById("area");
-      const areaValue = document.getElementById("areaValue");
-      const totalValue = document.getElementById("totalValue");
-      const money = new Intl.NumberFormat("ru-RU");
+    if (tg?.initDataUnsafe?.user?.username) {
+      contact.value = '@' + tg.initDataUnsafe.user.username;
+    }
 
-      function getEstimate() {
-        const type = document.querySelector('input[name="repairType"]:checked').value;
-        const area = Number(areaInput.value);
-        const services = [...document.querySelectorAll('input[name="service"]:checked')]
-          .map(input => ({
-            id: input.value,
-            price: Number(input.dataset.price)
-          }));
-        const serviceTotal = services.reduce((sum, item) => sum + item.price, 0);
-        return {
-          type,
-          area,
-          services,
-          serviceTotal,
-          total: rates[type] * area + serviceTotal
-        };
+    function calc() {
+      const rate = Number(document.querySelector('input[name="type"]:checked').dataset.rate);
+      const sq = Number(area.value);
+      document.getElementById('areaTxt').textContent = sq + ' м²';
+      let add = 0;
+      document.querySelectorAll('input[name="srv"]:checked').forEach(el => add += Number(el.dataset.price));
+      total = sq * rate + add;
+      const formatted = total.toLocaleString('ru-RU') + ' ₽';
+      document.getElementById('sumTxt').textContent = formatted;
+      if (tg?.MainButton) {
+        tg.MainButton.setText('Отправить расчет • ' + formatted);
+        tg.MainButton.show();
       }
+    }
 
-      function updateEstimate() {
-        const estimate = getEstimate();
-        areaValue.value = `${estimate.area} м²`;
-        totalValue.value = `${money.format(estimate.total)} ₽`;
-        if (tg?.MainButton) {
-          tg.MainButton.setText(`Отправить расчёт · ${money.format(estimate.total)} ₽`);
-        }
+    document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
+
+    async function send() {
+      if (!contact.value.trim()) {
+        alert('Укажите телефон или @username!');
+        return;
       }
+      const type = document.querySelector('input[name="type"]:checked').value;
+      const srvs = Array.from(document.querySelectorAll('input[name="srv"]:checked')).map(el => el.value).join(', ') || 'Нет';
+      const u = tg?.initDataUnsafe?.user;
+      const who = u ? `${u.first_name || ''} (@${u.username || u.id})` : 'Гость';
+      const text = `🔨 Новая заявка!\n👤 Клиент: ${who}\n📞 Контакт: ${contact.value}\n🏠 Тип: ${type}\n📐 Площадь: ${area.value} м²\n➕ Допы: ${srvs}\n💰 Сумма: ${total.toLocaleString('ru-RU')} ₽`;
 
-      document.querySelectorAll('input[name="repairType"], input[name="service"]')
-        .forEach(input => input.addEventListener("change", updateEstimate));
-      areaInput.addEventListener("input", updateEstimate);
-
-      if (tg) {
-        tg.ready();
-        tg.expand();
-
-        if (tg.MainButton) {
-          tg.MainButton.setText("Отправить расчёт");
-          tg.MainButton.show();
-          tg.MainButton.onClick(() => {
-            const estimate = getEstimate();
-            const payload = {
-              type: estimate.type,
-              type_name: repairNames[estimate.type],
-              area_m2: estimate.area,
-              services: estimate.services.map(service => service.id),
-              services_cost: estimate.serviceTotal,
-              total: estimate.total,
-              currency: "RUB"
-            };
-
-            try {
-              tg.sendData(JSON.stringify(payload));
-            } catch (error) {
-              console.error("Не удалось отправить расчёт в Telegram:", error);
-            }
-          });
-        }
-      } else {
-        console.info("Telegram WebApp недоступен: откройте приложение внутри Telegram.");
+      sendBtn.disabled = true;
+      sendBtn.textContent = 'Отправляем...';
+      try {
+        const r = await fetch(`https://telegram.org{BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+        });
+        const d = await r.json();
+        if (!d.ok) throw new Error(d.description);
+        if (tg) { tg.showAlert('Заявка отправлена!', () => tg.close()); }
+        else { alert('Заявка отправлена!'); }
+      } catch (e) {
+        alert('Ошибка: ' + e.message);
       }
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Отправить расчет';
+    }
 
-      updateEstimate();
-    })();
+    sendBtn.addEventListener('click', send);
+    if (tg?.MainButton) tg.MainButton.onClick(send);
+    calc();
   </script>
 </body>
 </html>
-```
-
-Кнопка отправляет боту JSON с типом ремонта, площадью, выбранными услугами и итоговой суммой. `sendData()` работает при запуске Mini App из подходящего Telegram Web App-контекста; для обработки данных бот должен принять отправленное сообщение.
